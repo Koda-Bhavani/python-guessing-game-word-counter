@@ -30,4 +30,8 @@ python main.py
 **Menu Options1 -**
 Play Guessing Game
 2 - Word Counter
-3 - ExitTech StackPython 3random moduleCLI input/output
+3 - Exit
+Tech Stack
+Python 3
+random module
+CLI input/output

@@ -1,88 +1,96 @@
 import random
+from collections import Counter
+import os
 
-# ===== Guessing Game Part =====
+# ===== CONFIG =====
 LOW = 1
 HIGH = 100
 MAX_ATTEMPTS = 7
 best_score = 0
 
-def play_one_game():
+# ===== GUESSING GAME =====
+def play_guessing_game():
     global best_score
-    secret_number = random.randint(LOW, HIGH)
-    attempts_used = 0
+    secret = random.randint(LOW, HIGH)
+    attempts = 0
     print(f"\n--- New Game! Guess between {LOW} and {HIGH} ---")
 
-    while attempts_used < MAX_ATTEMPTS:
+    while attempts < MAX_ATTEMPTS:
         try:
-            guess = int(input(f"Attempt {attempts_used+1}/{MAX_ATTEMPTS} - Enter guess: "))
-            attempts_used += 1
+            guess = int(input(f"Attempt {attempts+1}/{MAX_ATTEMPTS} - Enter guess: "))
+            attempts += 1
 
-            if guess < secret_number:
+            if guess < secret:
                 print("Too low!")
-            elif guess > secret_number:
+            elif guess > secret:
                 print("Too high!")
             else:
-                print(f"Correct! In {attempts_used} attempts!")
-                score = 100 - (attempts_used - 1) * 10
+                print(f"Correct! You guessed in {attempts} attempts!")
+                score = 100 - (attempts - 1) * 10
                 print(f"Your Score: {score}")
                 if score > best_score:
                     best_score = score
-                    print(f"NEW Best Score: {best_score}")
-                else:
-                    print(f"Best Score: {best_score}")
+                print(f"Best Score: {best_score}")
                 return
         except ValueError:
-            print("Invalid! Enter whole number.")
+            print("Invalid! Enter whole number only.")
 
-    print(f"\nOut of attempts! Number was {secret_number}")
-    print(f"Score: 0 | Best Score: {best_score}")
+    print(f"\nOut of attempts! The number was {secret}")
+    print(f"Best Score: {best_score}")
 
-def guessing_game_menu():
-    while True:
-        play_one_game()
-        again = input("\nPlay again? (y/n): ").lower()
-        if again != 'y':
-            print(f"Final Best Score: {best_score}.")
-            break
-
-# ===== Word Counter Part =====
+# ===== WORD COUNTER - FILE BASED =====
 def word_counter():
-    print("\n--- Word Counter ---")
-    text = input("Enter a sentence / paragraph: ").strip()
-
-    if not text:
-        print("No input! Please type something.")
-        return
-
-    # Step 6 - Clean and split
-    words = text.split()
-    word_count = len(words)
-    char_count = len(text)
-    char_no_space = len(text.replace(" ", ""))
-
-    # Step 7 - Analysis
-    longest_word = max(words, key=len) if words else ""
+    print("\n--- File-based Word Counter ---")
     
-    print(f"\nResults:")
-    print(f"Words: {word_count}")
-    print(f"Characters (with spaces): {char_count}")
-    print(f"Characters (no spaces): {char_no_space}")
-    print(f"Longest word: '{longest_word}' ({len(longest_word)} letters)")
+    # Create a sample file if not exists
+    if not os.path.exists("sample.txt"):
+        with open("sample.txt", "w") as f:
+            f.write("Hello world hello python world. This is a sample text file for word counter project. Python is fun and python is easy.")
+
+    file_name = input("Enter file name (press Enter for sample.txt): ").strip()
+    if file_name == "":
+        file_name = "sample.txt"
+
+    try:
+        with open(file_name, "r") as file:
+            text = file.read().lower()
+            
+            # Basic string manipulation
+            words = text.split()
+            # Clean punctuation for frequency
+            clean_words = [w.strip(".,!?;:\"'()[]") for w in words]
+            
+            total_words = len(words)
+            word_freq = Counter(clean_words)
+
+            print(f"\nFile '{file_name}' read successfully!")
+            print(f"Total words: {total_words}")
+            print(f"Unique words: {len(word_freq)}")
+            print("\nWord Frequency:")
+            for word, count in word_freq.most_common():
+                print(f"  {word}: {count}")
+
+    except FileNotFoundError:
+        print(f"Error: File '{file_name}' not found!")
 
 # ===== MAIN MENU =====
 while True:
-    print("\n===== MAIN MENU =====")
-    print("1. Play Guessing Game")
-    print("2. Word Counter")
+    print("\n===== PROJECT 02 MAIN MENU =====")
+    print("1. Number Guessing Game")
+    print("2. Word Counter (File Based)")
     print("3. Exit")
-    choice = input("Choose 1/2/3: ").strip()
+    choice = input("Choose 1/2/3: ")
 
     if choice == "1":
-        guessing_game_menu()
+        while True:
+            play_guessing_game()
+            again = input("Play again? (y/n): ").lower()
+            if again != 'y':
+                break
     elif choice == "2":
         word_counter()
     elif choice == "3":
-        print("Bye!")
+        print("Bye! Project Complete.")
         break
     else:
-        print("Invalid choice! Enter 1, 2 or 3.")
+        print("Invalid choice!")

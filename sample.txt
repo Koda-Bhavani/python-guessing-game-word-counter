@@ -1,0 +1,2 @@
+Hello world hello python world. Python is fun and python is powerful.
+This is a sample file for word counter. Python is easy to learn.
